@@ -13,12 +13,9 @@ import { WORDS } from '../../data';
 
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
 
-// Pick a random word on every pageload.
-const answer = sample(WORDS);
-// To make debugging easier, we'll log the solution in the console.
-console.info({ answer });
-
 function Game() {
+  const [answer, setAnswer] = React.useState(() => sample(WORDS));
+
   const [guesses, setGuesses] = React.useState([]);
   const [gameStatus, setGameStatus] = React.useState('playing');
 
@@ -33,6 +30,13 @@ function Game() {
     }
   }
 
+  function handleRestart() {
+    const newAnswer = sample(WORDS);
+    setAnswer(newAnswer);
+    setGuesses([]);
+    setGameStatus('playing');
+  }
+
   const validatedGuesses = guesses.map((guess) =>
     checkGuess(guess, answer)
   );
@@ -44,9 +48,14 @@ function Game() {
       <Keyboard validatedGuesses={validatedGuesses} />
 
       {gameStatus === 'won' && (
-        <WonBanner numOfGuesses={guesses.length} />
+        <WonBanner
+          numOfGuesses={guesses.length}
+          handleRestart={handleRestart}
+        />
       )}
-      {gameStatus === 'lost' && <LostBanner answer={answer} />}
+      {gameStatus === 'lost' && (
+        <LostBanner answer={answer} handleRestart={handleRestart} />
+      )}
     </>
   );
 }
