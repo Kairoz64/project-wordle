@@ -4,8 +4,11 @@ import GuessInput from '../GuessInput';
 import GuessResults from '../GuessResults';
 import WonBanner from '../WonBanner';
 import LostBanner from '../LostBanner';
+import Keyboard from '../Keyboard';
 
 import { sample } from '../../utils';
+import { checkGuess } from '../../game-helpers';
+
 import { WORDS } from '../../data';
 
 import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
@@ -30,10 +33,16 @@ function Game() {
     }
   }
 
+  const validatedGuesses = guesses.map((guess) =>
+    checkGuess(guess, answer)
+  );
+
   return (
     <>
-      <GuessResults guesses={guesses} answer={answer} />
+      <GuessResults validatedGuesses={validatedGuesses} />
       <GuessInput addGuess={addGuess} gameStatus={gameStatus} />
+      <Keyboard validatedGuesses={validatedGuesses} />
+
       {gameStatus === 'won' && (
         <WonBanner numOfGuesses={guesses.length} />
       )}
